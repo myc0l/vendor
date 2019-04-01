@@ -1,8 +1,10 @@
 package com.springboot.vendor.api.v1.mapper;
 
-import org.junit.Before;
+import com.springboot.vendor.api.v1.model.CategoryDTO;
+import com.springboot.vendor.domain.Category;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class CategoryMapperTest {
 
@@ -11,7 +13,19 @@ public class CategoryMapperTest {
 
     CategoryMapper categoryMapper = CategoryMapper.INSTANCE;
 
-    @Before
-    public void setUp() throws Exception {
-    }
+  @Test
+    public void categoryToCategoryDTO() throws Exception {
+
+      //given
+      Category category = new Category();
+      category.setName(NAME);
+      category.setId(ID);
+
+      //when
+      CategoryDTO categoryDTO = categoryMapper.categoryToCategoryDTO(category);
+
+      //then
+      assertEquals(Long.valueOf(ID), categoryDTO.getId());
+      assertEquals(NAME, categoryDTO.getName());
+  }
 }
