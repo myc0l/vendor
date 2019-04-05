@@ -9,4 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface CategoryMapper {
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
     CategoryDTO categoryToCategoryDTO(Category category);
+    Category categoryDTOToCategory(CategoryDTO categoryDTO);
 }

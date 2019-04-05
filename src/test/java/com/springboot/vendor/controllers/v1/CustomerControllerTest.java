@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
@@ -76,6 +75,8 @@ public class CustomerControllerTest extends AbstractRestControllerTest {
         customer1.setLastname("Flintstone");
         customer1.setCustomerUrl(CustomerController.BASE_URL + "/1");
 
+        when(customerService.getCustomerById(anyLong())).thenReturn(customer1);
+
         //when
         mockMvc.perform(get(CustomerController.BASE_URL + "/1")
         .contentType(MediaType.APPLICATION_JSON))
@@ -88,16 +89,22 @@ public class CustomerControllerTest extends AbstractRestControllerTest {
 
         //given
         CustomerDTO customer = new CustomerDTO();
-        customer.setFirstname("Nucho");
-        customer.setLastname("Nhingi");
-        customer.setCustomerUrl(CustomerController.BASE_URL + "/1");
+        customer.setFirstname("Fred");
+        customer.setLastname("Flintstone");
 
-        //when /when
+        CustomerDTO returnDTO = new CustomerDTO();
+        returnDTO.setFirstname(customer.getFirstname());
+        returnDTO.setLastname(customer.getLastname());
+        returnDTO.setCustomerUrl(CustomerController.BASE_URL + "/1");
+
+        when(customerService.createNewCustomer(customer)).thenReturn(returnDTO);
+
+        //when/then
         mockMvc.perform(post(CustomerController.BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(customer)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstname", equalTo("Nucho")))
+                .andExpect(jsonPath("$.firstname", equalTo("Fred")))
                 .andExpect(jsonPath("$.customer_url", equalTo(CustomerController.BASE_URL + "/1")));
     }
 
@@ -132,15 +139,16 @@ public class CustomerControllerTest extends AbstractRestControllerTest {
         //given
         CustomerDTO customer = new CustomerDTO();
         customer.setFirstname("Fred");
+        customer.setLastname("Flintstone");
 
         CustomerDTO returnDTO = new CustomerDTO();
         returnDTO.setFirstname(customer.getFirstname());
-        returnDTO.setLastname("Flintstone");
+        returnDTO.setLastname(customer.getLastname());
         returnDTO.setCustomerUrl(CustomerController.BASE_URL + "/1");
 
         when(customerService.patchCustomer(anyLong(), any(CustomerDTO.class))).thenReturn(returnDTO);
 
-        mockMvc.perform(put(CustomerController.BASE_URL + "/1")
+        mockMvc.perform(patch(CustomerController.BASE_URL + "/1")
         .contentType(MediaType.APPLICATION_JSON)
         .content(asJsonString(customer)))
                 .andExpect(status().isOk())

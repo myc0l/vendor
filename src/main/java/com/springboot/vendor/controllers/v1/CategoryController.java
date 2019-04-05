@@ -20,12 +20,14 @@ public class CategoryController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public CategoryListDTO getAllCategories(){
+
         return new CategoryListDTO(categoryService.getAllCategories());
     }
 
     @GetMapping("{name}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDTO getCategoryByName(@PathVariable String name){
+
         return categoryService.getCategoryByName(name);
     }
 }

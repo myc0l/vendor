@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 
+import static com.springboot.vendor.controllers.v1.AbstractRestControllerTest.asJsonString;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -66,6 +67,51 @@ public class VendorControllerTest {
         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
+    }
+
+    @Test
+    public void createNewVendor() throws Exception{
+
+        given(vendorService.createNewVendor(vendorDTO_1)).willReturn(vendorDTO_1);
+
+        mockMvc.perform(post(VendorController.BASE_URL)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(vendorDTO_1)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
+    }
+
+    @Test
+    public void updateVendor() throws Exception {
+
+        given(vendorService.saveVendorByDTO(anyLong(), any(VendorDTO.class))).willReturn(vendorDTO_1);
+
+        mockMvc.perform(put(VendorController.BASE_URL + "/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(vendorDTO_1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
+    }
+
+    @Test
+    public void patchVendor() throws Exception {
+
+        given(vendorService.saveVendorByDTO(anyLong(),any(VendorDTO.class))).willReturn(vendorDTO_1);
+
+        mockMvc.perform(patch(VendorController.BASE_URL + "/1")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(vendorDTO_1)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
+
+    }
+
+    @Test
+    public void deleteVendor() throws Exception {
+        mockMvc.perform(delete(VendorController.BASE_URL + "/1"))
+                .andExpect(status().isOk());
+
+        then(vendorService).should().deleteVendorById(anyLong());
     }
 
 }
